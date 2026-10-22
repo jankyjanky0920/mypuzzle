@@ -28,7 +28,7 @@ function makeNext(seed){const random=B.rng(seed),raw=B.generate(seed),base=raw.p
  const positions=r.trace.flatMap(s=>s.effects.filter(e=>e.type==='place').map(e=>e.cell));save({id:`NP-NEXT-${seed}-${level}`,kind:'next',level,givens:g.join(''),solution:raw.solution.join(''),target:{cell:r.target.cell,digit:r.target.digit,code:T.coord(r.target.cell)+r.target.digit},trace:r.trace,metrics:metrics({trace:r.trace,positions}),verification:{uniqueAnswer:true,firstPlacementUnique:true,answerPolicies:6,completionUnique:completions.count===1,traceVerified:true},seed});return true;
  }return false;
 }
-if(require.main===module)for(const kind of requested==='all'?['next','costume','shuriken','consecutive']:[requested]){
+if(require.main===module)for(const kind of requested==='all'?['next','costume','shuriken','consecutive','diagonal']:[requested]){
  const started=Date.now();let attempts=0;while(attempts++<maxAttempts&&(count(kind,'normal')<targetNormal||count(kind,'extreme')<targetExtreme)){
   seed++;if(attempts%100===1)console.log('PROGRESS',kind,attempts,'normal',count(kind,'normal'),'extreme',count(kind,'extreme'),'seconds',Math.round((Date.now()-started)/1000));
   if(kind==='next'){makeNext(seed);continue;}
@@ -37,6 +37,8 @@ if(require.main===module)for(const kind of requested==='all'?['next','costume','
    const near=process.env.COSTUME_NEAR===undefined?count(kind,'normal')<targetNormal:process.env.COSTUME_NEAR==='1',general=process.env.COSTUME_RANDOM_LATIN===undefined?near:process.env.COSTUME_RANDOM_LATIN==='1';solution=general?G.generalLatin(random):G.latin(random);const parts=[],keys=new Set();for(let t=0;t<30&&parts.length<3;t++){const p=near&&parts.length?G.nearbyPartitions(parts[0],solution,random).find(p=>!keys.has(p.map(a=>a.slice().sort((a,b)=>a-b).join(',')).sort().join(';'))):G.partition(random,{solution});if(!p)break;const key=p.map(a=>a.slice().sort((a,b)=>a-b).join(',')).sort().join(';');if(keys.has(key))continue;keys.add(key);parts.push(p);}if(parts.length!==3)continue;def=T.costumeDef(parts);
   }else if(kind==='shuriken'){
    const regions=G.partition(random,{fixed:G.fixedShuriken});if(!regions)continue;def=T.shurikenDef(regions);const r=G.orbitSolution(def,random);if(!r)continue;solution=r.solution;removalGroups=r.orbits;
+  }else if(kind==='diagonal'){
+   def=T.diagonalDef();const completed=V.create(def).countSolutions(Array(81).fill(0),1,80000,random);if(!completed.complete||!completed.solution)continue;solution=completed.solution;
   }else{
    solution=B.generate(seed).solution;const edges=[];for(let r=0;r<9;r++)for(let c=0;c<9;c++){const a=r*9+c;if(c<8)edges.push({a,b:a+1,consecutive:Math.abs(solution[a]-solution[a+1])===1});if(r<8)edges.push({a,b:a+9,consecutive:Math.abs(solution[a]-solution[a+9])===1});}def=T.standardDef(edges);
   }
