@@ -5,3 +5,8 @@ node_modules/
 *.zip
 *-backup.json
 .openai/
+
+src/generated-*.json
+src/nearby-costume.json
+src/random-costume.json
+src/derived-costume.json
