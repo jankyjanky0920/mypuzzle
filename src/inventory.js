@@ -2,7 +2,7 @@
 'use strict';
 const T=root.PuzzleTypes||(typeof require==='function'?require('./puzzle-types.js'):null);
 function played(db){return [...new Set([...(db.usedPuzzleIds||[]),...Object.values(db.sessions||{}).map(s=>s.puzzleId),...Object.values(db.tests||{}).flatMap(r=>r.questions.map(q=>q.puzzleId))])];}
-function fresh(pool,db,{kind,level}){const used=new Set(played(db));return pool.filter(p=>(p.kind||'standard')===kind&&p.level===level&&!used.has(p.id));}
+function fresh(pool,db,{kind,level}){const used=new Set(played(db));return pool.filter(p=>T.canOffer(p)&&(p.kind||'standard')===kind&&p.level===level&&!used.has(p.id));}
 function needed(pool,db,{kind,level,count=1}){if(!T.TYPES[kind])throw Error('問題の種類が不明です。');return Math.max(0,count-fresh(pool,db,{kind,level}).length);}
 function mark(db,ids,pool){db.usedPuzzleIds=[...new Set([...(db.usedPuzzleIds||[]),...ids])];const fingerprints=ids.map(id=>pool.find(p=>p.id===id)?.fingerprint).filter(Boolean);db.usedFingerprints=[...new Set([...(db.usedFingerprints||[]),...fingerprints])].slice(-5000);}
 function compact(db,{maxCharacters=700000,maxCount=48,protectIds=[]}={}){const a=db.generatedPuzzles||[],protectedIds=new Set(protectIds);const s=db.sessions?.[db.activeId];if(s)protectedIds.add(s.puzzleId);for(const r of Object.values(db.tests||{}))if(r.status==='running')r.questions.forEach(q=>protectedIds.add(q.puzzleId));const used=new Set(played(db)),removed=new Set();let size=a.reduce((n,p)=>n+JSON.stringify(p).length,0),count=a.length;

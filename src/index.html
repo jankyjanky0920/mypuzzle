@@ -38,7 +38,7 @@
 <div id="panel-log" class="side-panel" role="tabpanel" aria-labelledby="tab-log" hidden><div class="panel-label">YOUR LOG</div><h2>考えたことを残す。</h2><form id="log-form"><label>使った解法<select id="log-tech"></select></label><label>対象のマス<input type="text" id="log-cells" placeholder="例：3行目、左上ブロック" maxlength="200"></label><label>理由・手順<textarea id="log-text" rows="4" placeholder="どの候補に着目し、何を消したか" maxlength="4000"></textarea></label><button class="primary" type="submit">記録する</button></form><div id="log-list" class="log-list"></div><details class="reference-details"><summary>模範解答を確認する</summary><p class="quiet">解答の数字が表示されます。自分の解答順と違っていても問題ありません。</p><button id="show-reference">解法の全手順を表示</button><div id="reference-list"></div></details></div>
 <div id="panel-info" class="side-panel" role="tabpanel" aria-labelledby="tab-info" hidden><div class="panel-label">VERIFIED PUZZLE</div><h2>問題の検証情報</h2><dl id="puzzle-info"></dl><p id="verification-note" class="quiet"></p><details><summary>難易度について</summary><p>通常は基本解法で解ける問題です。使える解法は種類ごとに「この難易度で使える解法」で確認できます。最上難易度は通常の解法だけでは止まり、上位解法で解ける問題です。次の一手は最初の数字確定までを判定します。チェーンは最大7リンクで、仮置きの枝分かれや総当たりは解説に使用しません。</p></details></div>
 </aside></div>
-<footer class="workspace-footer"><button id="back-home" class="text-button">← モード・難易度を選び直す</button><span>ナンプレ練習帳 / v4.0.0</span></footer>
+<footer class="workspace-footer"><button id="back-home" class="text-button">← モード・難易度を選び直す</button><span>ナンプレ練習帳 / v4.1.0</span></footer>
 </section>
 <section id="test-result" class="test-result" hidden><span class="eyebrow">NUMBER PLACE TEST / RESULT</span><h1>ナンプレテストの結果</h1><p id="test-score" class="test-score"></p><p id="test-result-summary"></p><p id="test-result-counts" class="quiet"></p><div id="test-result-items"></div><button id="test-result-home">ホームへ</button></section>
 </main>
@@ -50,5 +50,5 @@
 <dialog id="generation-dialog"><div class="dialog-heading"><h2 id="generation-title">問題を生成・検証</h2></div><p id="generation-queue"></p><p id="generation-status" role="status">生成を準備しています。</p><progress aria-label="問題の生成と検証"></progress><p class="quiet">一意解、推測を使わない論理手順、ABCDの終盤性を確認してから出題します。条件に合わない問題は採用しません。テストの120分は問題の準備が終わってから始まります。</p><button id="generation-cancel">生成をキャンセル</button></dialog>
 <div id="toast" class="toast" role="status" hidden></div>
 <div id="print-area" aria-hidden="true"></div>
-<!--ENGINE--><!--EXTRA-RULES--><!--VARIANT-ENGINE--><!--TYPES--><!--BOARD-VIEW--><!--STORAGE--><!--TEST-MODE--><!--TEST-UI--><!--INVENTORY--><!--GENERATOR--><!--RUNTIME-GENERATION--><!--GENERATION-SEEDS--><!--WORKER-SOURCE--><!--PUZZLES--><!--APP-->
+<!--ENGINE--><!--EXTRA-RULES--><!--VARIANT-ENGINE--><!--TYPES--><!--GEOMETRY--><!--HINT-GUIDE--><!--BOARD-VIEW--><!--STORAGE--><!--TEST-MODE--><!--TEST-UI--><!--INVENTORY--><!--GENERATOR--><!--RUNTIME-GENERATION--><!--GENERATION-SEEDS--><!--WORKER-SOURCE--><!--PUZZLES--><!--APP-->
 </body></html>

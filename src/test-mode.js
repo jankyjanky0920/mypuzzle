@@ -4,13 +4,13 @@ const T=root.PuzzleTypes||(typeof require==='function'?require('./puzzle-types.j
 const LIMIT_SECONDS=120*60,MAX_KINDS=20,kind=p=>p.kind||'standard';
 const shuffle=(values,random)=>{const a=values.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
 function plan(pool,{level='normal',registry=T.TYPES,playedIds=[],random=Math.random,selectedKinds=null}={}){
- const kinds=Object.keys(registry).filter(k=>registry[k].family==='number-place'&&pool.some(p=>kind(p)===k));
+ const kinds=Object.keys(registry).filter(k=>registry[k].family==='number-place'&&pool.some(p=>T.canOffer(p)&&kind(p)===k));
  if(!kinds.includes('standard'))throw Error('テストにはスタンダードナンプレが必要です。');
  const required=kinds.filter(k=>k==='standard'||registry[k].testRequired),others=shuffle(kinds.filter(k=>!required.includes(k)),random),selected=selectedKinds?selectedKinds.slice():[...required,...others.slice(0,Math.max(0,MAX_KINDS-required.length))];
  if(new Set(selected).size!==selected.length||selected.length>MAX_KINDS||selected.some(k=>!kinds.includes(k))||required.some(k=>!selected.includes(k)))throw Error('テストの種類の指定が不正です。');
  if(required.length>MAX_KINDS)throw Error('必須の種類が20種類を超えています。');
  const played=new Set(playedIds),chosen=new Set(),ids=[],counts={};
- for(const k of selected){const count=registry[k].testCount??1;if(!Number.isInteger(count)||count<1||count>100)throw Error('テストの出題数が不正です。');const eligible=pool.filter(p=>kind(p)===k&&p.level===level&&!chosen.has(p.id));
+ for(const k of selected){const count=registry[k].testCount??1;if(!Number.isInteger(count)||count<1||count>100)throw Error('テストの出題数が不正です。');const eligible=pool.filter(p=>T.canOffer(p)&&kind(p)===k&&p.level===level&&!chosen.has(p.id));
   if(eligible.length<count)throw Error(`${registry[k].name}はこの難易度で${count}問必要ですが、${eligible.length}問しか収録されていません。`);
   const options=[...shuffle(eligible.filter(p=>!played.has(p.id)),random),...shuffle(eligible.filter(p=>played.has(p.id)),random)];counts[k]=count;
   for(const p of options.slice(0,count)){chosen.add(p.id);ids.push(p.id);}

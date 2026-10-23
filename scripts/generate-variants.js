@@ -36,7 +36,7 @@ if(require.main===module)for(const kind of requested==='all'?['next','costume','
   if(kind==='costume'){
    const near=process.env.COSTUME_NEAR===undefined?count(kind,'normal')<targetNormal:process.env.COSTUME_NEAR==='1',general=process.env.COSTUME_RANDOM_LATIN===undefined?near:process.env.COSTUME_RANDOM_LATIN==='1';solution=general?G.generalLatin(random):G.latin(random);const parts=[],keys=new Set();for(let t=0;t<30&&parts.length<3;t++){const p=near&&parts.length?G.nearbyPartitions(parts[0],solution,random).find(p=>!keys.has(p.map(a=>a.slice().sort((a,b)=>a-b).join(',')).sort().join(';'))):G.partition(random,{solution});if(!p)break;const key=p.map(a=>a.slice().sort((a,b)=>a-b).join(',')).sort().join(';');if(keys.has(key))continue;keys.add(key);parts.push(p);}if(parts.length!==3)continue;def=T.costumeDef(parts);
   }else if(kind==='shuriken'){
-   const regions=G.partition(random,{fixed:G.fixedShuriken});if(!regions)continue;def=T.shurikenDef(regions);const r=G.orbitSolution(def,random);if(!r)continue;solution=r.solution;removalGroups=r.orbits;
+   const r=G.independentShuriken(random);if(!r)continue;def=r.def;solution=r.solution;
   }else if(kind==='honeycomb'){
    def=T.honeycombDef();const completed=V.create(def).countSolutions(Array(81).fill(0),1,30000,random);if(!completed.complete||!completed.solution)continue;solution=completed.solution;
   }else if(['inequality','oneOrEight','rounding'].includes(kind)){
@@ -54,7 +54,7 @@ if(require.main===module)for(const kind of requested==='all'?['next','costume','
    const g=options[op],normal=en.solve(g,'normal',{chainLimit:60000});let level=normal.solved?'normal':'extreme';if(count(kind,level)>=(level==='normal'?targetNormal:targetExtreme))continue;let result=normal.solved?normal:en.solve(g,'extreme',{chainLimit:90000});if(!result.solved)continue;result.level=level;
    if(level==='extreme'&&!result.trace.some(st=>st.rank>=3))continue;const abcd=certify(en,g,result,def,kind);if(!abcd)continue;
    const proof=en.verifyTrace(g,result.trace),unique=en.countSolutions(g,2,300000);if(!proof.valid||!proof.solved||!unique.complete||unique.count!==1)throw Error('Verification failed '+kind+' seed '+seed);
-   save({id:`NP-${kind.toUpperCase()}-${seed}-${op}`,kind,level,givens:g.join(''),solution:solution.join(''),definition:def,abcd,trace:result.trace,metrics:metrics(result),verification:{unique:true,solutionCount:1,complete:true,traceVerified:true,engineVersion:'3.0.0'},seed});break;
+   save({id:`NP-${kind.toUpperCase()}-${seed}-${op}`,kind,level,givens:g.join(''),solution:solution.join(''),definition:def,abcd,trace:result.trace,metrics:metrics(result),verification:{unique:true,solutionCount:1,complete:true,traceVerified:true,engineVersion:en.VERSION},seed});break;
   }
  }
  console.log('FINISHED',kind,count(kind,'normal'),count(kind,'extreme'),'attempts',attempts,'seconds',Math.round((Date.now()-started)/1000));

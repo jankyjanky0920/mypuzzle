@@ -23,4 +23,9 @@ function orbitSolution(def,random){
 }
 api.orbitSolution=orbitSolution;root.GenerationGeometry=api;if(typeof module!=='undefined')module.exports=api;
 
+// Only the outline and shared rectangles rotate together. The four partitions,
+// completed digits and later clue removals are sampled independently.
+function independentShuriken(random){const parts=[];for(let b=0;b<4;b++){let p=null;for(let attempt=0;attempt<12&&!p;attempt++){const candidate=partition(random,{fixed:fixedShuriken});if(candidate&&!parts.some(a=>a.map(key).sort().join(';')===candidate.map(key).sort().join(';')))p=candidate;}if(!p)return null;parts.push(p);}const def=T.shurikenDef(parts),V=root.VariantEngine||(typeof require==='function'?require('./variant-engine.js'):null),u=V.create(def).countSolutions(Array(169).fill(0),1,60000,random);if(!u.complete||!u.solution)return null;for(let a=0;a<4;a++)for(let b=a+1;b<4;b++){const map=new Map();let same=true;for(let i=0;i<36;i++){const x=u.solution[def.boards[a][i]],y=u.solution[def.boards[b][i]];if(map.has(x)&&map.get(x)!==y){same=false;break;}map.set(x,y);}if(same)return null;}return {def,solution:u.solution};}
+api.independentShuriken=independentShuriken;
+
 })(typeof globalThis!=='undefined'?globalThis:this);

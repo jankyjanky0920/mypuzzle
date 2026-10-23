@@ -1,6 +1,6 @@
 {
   "name": "sudoku-practice",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "private": true,
   "description": "Personal number-place practice with nineteen puzzle types, verified background generation, a 120-minute test, verified logic and pen input",
   "scripts": {
