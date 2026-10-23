@@ -3,7 +3,7 @@
 const T=root.PuzzleTypes,TM=root.PracticeTest,$=id=>document.getElementById(id),kind=p=>p.kind||'standard';
 const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clock=ms=>{const s=Math.ceil(Math.max(0,ms)/1000);return Math.floor(s/60).toString().padStart(2,'0')+':'+(s%60).toString().padStart(2,'0');};
-function create({pool,getDB,save,toast,confirmDo,openQuestion,beforeNavigate,beforeFinish,closeWorkspace,review}){
+function create({pool,getDB,save,toast,confirmDo,openQuestion,beforeNavigate,beforeFinish,closeWorkspace,review,prepareTest=async()=>({}),getPlayed=null,markUsed=()=>{}}){
  let activeId=null,resultId=null,ticking=false;
  const db=()=>getDB(),runs=()=>Object.values(db().tests||{}),run=()=>db().tests?.[activeId],question=()=>run()?.questions[run().currentIndex],puzzle=q=>pool.find(p=>p.id===q.puzzleId),running=()=>runs().find(r=>r.status==='running');
  function leave(){activeId=null;$('test-bar').hidden=true;$('test-navigation').hidden=true;}
@@ -30,7 +30,7 @@ function create({pool,getDB,save,toast,confirmDo,openQuestion,beforeNavigate,bef
   const past=runs().filter(r=>r.status!=='running').sort((a,b)=>b.startedAt-a.startedAt);$('test-history').hidden=!past.length;$('test-history-items').innerHTML=past.slice(0,30).map(r=>`<div class="history-row"><span>${new Date(r.startedAt).toLocaleString('ja-JP')}<br><small>${r.level==='normal'?'通常':'最上難易度'} / ${r.result.correct} / ${r.result.total}問 正解 / ${r.status==='expired'?'時間切れ':'提出済み'}</small></span><button data-test-result="${esc(r.id)}">結果</button></div>`).join('');
  }
  function tick(){if(ticking)return;ticking=true;try{let changed=false;for(const r of runs())if(r.status==='running'&&TM.remainingMs(r)<=0){finish(r,'time');changed=true;}if(run())update();if(!$('welcome').hidden){if(changed)renderHome();else{const r=running();if(r)$('test-resume-summary').textContent=`${r.mode==='analog'?'アナログ':'デジタル'} / ${r.questions.length}問 / 残り ${clock(TM.remainingMs(r))}（時間は進み続けます）`;}}}finally{ticking=false;}}
- function start(mode){tick();const current=running();if(current){open(current.id);toast('途中のテストを再開しました。');return;}try{const played=[...Object.values(db().sessions).map(q=>q.puzzleId),...runs().flatMap(r=>r.questions.map(q=>q.puzzleId))],r=TM.createRun(pool,{mode,level:document.querySelector('input[name=difficulty]:checked').value,playedIds:played});db().tests??={};db().tests[r.id]=r;db().activeTestId=r.id;save(true);open(r.id);}catch(e){toast(e.message);}}
+ async function start(mode){tick();const current=running();if(current){open(current.id);toast('途中のテストを再開しました。');return;}try{const level=document.querySelector('input[name=difficulty]:checked').value,prepared=await prepareTest(level),played=getPlayed?getPlayed():[...Object.values(db().sessions).map(q=>q.puzzleId),...runs().flatMap(r=>r.questions.map(q=>q.puzzleId))],r=TM.createRun(pool,{mode,level,playedIds:played,...prepared});db().tests??={};db().tests[r.id]=r;db().activeTestId=r.id;markUsed(r.questions.map(q=>q.puzzleId));save(true);open(r.id);}catch(e){toast(e.message);}}
  function recordAnswer(selected){if(!canEdit())return;const q=question(),p=puzzle(q);if(kind(p)==='next'&&q.mode==='digital'){const E=T.model(p);if(!E.activeSet.has(selected)||+p.givens[selected]||!q.values[selected]){toast('回答する空欄を選び、数字を入力してください。');return;}q.nextCell=selected;}
   save(true);update();toast(TM.isAnswered(q,p)?'回答を保存しました。正誤はテスト終了後に表示します。':'入力途中の回答を保存しました。');
  }
