@@ -1,15 +1,16 @@
 {
   "name": "sudoku-practice",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "private": true,
-  "description": "Personal number-place practice with nineteen puzzle types, verified background generation, a 120-minute test, verified logic and pen input",
+  "description": "Personal puzzle practice with 23 logic puzzle kinds, nineteen Sudoku kinds, verified generation, PDF booklets and 120-minute tests",
   "scripts": {
     "build": "node scripts/build.js",
     "test": "node --test tests/*.test.js",
     "generate": "node scripts/generate-pool.js",
     "generate:more": "node scripts/generate-more.js",
     "generate:variants": "node scripts/generate-variants.js",
-    "merge:variants": "node scripts/merge-variants.js"
+    "merge:variants": "node scripts/merge-variants.js",
+    "generate:logic": "node scripts/generate-logic.js"
   },
   "engines": {
     "node": ">=20"
