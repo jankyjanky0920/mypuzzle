@@ -1,0 +1,3 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict'),S=require('../src/logic-shading'),C=require('../src/logic-csp');
+test('four shading kinds have independent valid solutions and sound proofs',()=>{for(const k of Object.keys(S.dimensions)){let p;for(let seed=1;seed<50&&!p;seed++)try{p=S.make(k,seed,{maxRemovals:20});}catch(e){if(k==='nanro')throw e;}assert(p,k);assert(S.valid(p,p.solution));assert(C.verifyTrace(S.compile(p),p.proof));assert.equal(C.count(S.compile(p),{nodeLimit:5}).count,1);}});
+test('Tapa counts runs around the join of the ring',()=>{assert.deepEqual(S.groups([1,1,0,1,0,0,0,1]),[1,3]);assert.deepEqual(S.groups(Array(8).fill(0)),[0]);});

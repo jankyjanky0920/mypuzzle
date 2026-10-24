@@ -1,0 +1,5 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),C=require('../src/logic-csp');
+test('logical propagation and proof replay do not depend on stored solutions',()=>{const m=new C.Model();m.variable([1,2,3]);m.variable([1,2]);m.variable([1]);m.allDifferent([0,1,2],'row');const s=C.solve(m);assert.deepEqual(s.values,[3,2,1]);assert(C.verifyTrace(m,s.steps));assert.equal(C.count(m).count,1);const tamper=structuredClone(s.steps);tamper[0].changes[0].after=[99];assert(!C.verifyTrace(m,tamper));});
+test('sum support and inconsistent inputs',()=>{const m=new C.Model();m.variable([0,1,2]);m.variable([2,4]);m.sum([0,1],3,'sum');assert.deepEqual(C.solve(m).values,[1,2]);assert(!C.solve(m,{assignments:{0:0}}).ok);});
+test('empty shuffle terminates and cardinality includes domain truth correctly',()=>{assert.deepEqual(C.shuffle([]),[]);const m=new C.Model();m.variable([0,1]);m.variable([1]);C.cardinality(m,[0,1],1,'one');assert.deepEqual(C.solve(m).values,[0,1]);});
