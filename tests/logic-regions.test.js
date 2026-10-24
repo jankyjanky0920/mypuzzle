@@ -1,0 +1,3 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict'),R=require('../src/logic-regions'),C=require('../src/logic-csp');
+test('free polyomino catalog is complete through five cells',()=>{assert.deepEqual(Object.values(R.polyominoes()).map(a=>a.length),[1,1,2,5,12]);});
+test('region kinds produce complete catalogs and replayable valid covers',()=>{for(const k of Object.keys(R.dimensions)){let p,last;for(let seed=1;seed<80&&!p;seed++)try{p=R.make(k,seed,{maxRemovals:8});}catch(e){last=e;}assert(p,k+': '+last);const m=R.compile(p);assert(R.valid(p,p.solution,m),k);assert(C.verifyTrace(m,p.proof),k);assert.equal(C.count(m,{nodeLimit:5}).count,1,k);}});

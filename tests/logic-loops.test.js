@@ -1,0 +1,2 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict'),L=require('../src/logic-loops'),C=require('../src/logic-csp');
+test('loop and snake generators satisfy native rules and replayable proofs',()=>{for(const k of Object.keys(L.dimensions)){let p,last;for(let seed=1;seed<20&&!p;seed++)try{p=L.make(k,seed,{maxRemovals:5});}catch(e){last=e;}assert(p,k+': '+last);assert(L.valid(p,p.solution),k);assert(C.verifyTrace(L.compile(p),p.proof),k);}});
