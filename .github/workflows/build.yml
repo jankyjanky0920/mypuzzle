@@ -2,6 +2,8 @@ name: Build Logic Owl Probe
 on:
   push:
     branches: ['probe-build-*']
+  pull_request:
+    branches: ['main']
 jobs:
   apk:
     runs-on: ubuntu-latest
