@@ -1,2 +1,4 @@
-# Logic Owl 文字取得テスト
-Android AccessibilityServiceでLogic Owlの問題番号、難易度、Solved、完答時間が取得できるか診断する別アプリです。元の15分抽選アプリとは別パッケージなので保存データに触れません。ユーザー補助の権限が必要です。データはローカルのみ。
+# Temporary Logic Owl accessibility test
+This isolated branch compiles a separate diagnostic APK to determine whether Logic Owl exposes Solved! and completion time through Android Accessibility.
+
+No data or secrets from the existing app are used.
